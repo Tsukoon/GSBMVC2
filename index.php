@@ -21,6 +21,6 @@ switch($uc){
 		include("controleurs/c_etatFrais.php");break; 
 	}
 }
-include("vues/v_pied.php") ;
+include("vues/v_pied.php");
 ?>
 
