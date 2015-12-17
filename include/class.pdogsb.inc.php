@@ -14,13 +14,14 @@
  * @link       http://www.php.net/manual/fr/book.pdo.php
  */
 
-class PdoGsb{   		
+class PdoGsb
+{   		
       	private $serveur='mysql:host=localhost';
-      	private $bdd='dbname=gsb_frais';   		
+      	private $bdd='dbname=gsb_frais_new_g3';   		
       	private $user='root' ;    		
-      	private $mdp='' ;	
+      	private $mdp='';	
         private $monPdo; //objet de connection à la bdd
-	private static $monPdoGsb=null; //instance unique de la classe
+		private static $monPdoGsb=null; //instance unique de la classe
 /**
  * Constructeur privé, crée l'instance de PDO qui sera sollicitée
  * pour toutes les méthodes de la classe
@@ -52,12 +53,27 @@ class PdoGsb{
  * @param $mdp
  * @return l'id, le nom et le prénom sous la forme d'un tableau associatif 
 */
-	public function getInfosVisiteur($login, $mdp){
-		$req = "select visiteur.id as id, visiteur.nom as nom, visiteur.prenom as prenom from visiteur 
-		where visiteur.login='$login' and visiteur.mdp='$mdp'";
-		$rs = $this->monPdo->query($req);
-		$ligne = $rs->fetch();
-		return $ligne;
+	public function getInfosVisiteur($login, $mdp)
+        {
+            $req = "select type from utilisateur where login='$login' and mdp=md5('$mdp')";
+            $rs = $this->monPdo->query($req);
+            $ligne = $rs->fetch();
+
+            $_SESSION["type"] = $ligne["type"];
+
+            if ($ligne["type"] == "Vis")
+            {
+                $query = "select id, nom, prenom from visiteur where login='$login'";
+                $rs = $this->monPdo->query($query);
+                $ligne = $rs->fetch();
+            }
+            else if ($ligne["type"] == "Com")
+            {
+                $query = "select id, nom, prenom from comptable where login='$login'";
+                $rs = $this->monPdo->query($query);
+                $ligne = $rs->fetch();
+            }
+            return $ligne;
 	}
 
 /**
@@ -297,5 +313,20 @@ class PdoGsb{
 		where fichefrais.idvisiteur ='$idVisiteur' and fichefrais.mois = '$mois'";
 		$this->monPdo->exec($req);
 	}
+}
+
+function creerUtilisateur($nom, $prenom, $id, $adresse, $codePostal, $ville, $date)
+{
+	$cnx = connexion::connecter();
+    $query = "insert into visiteur(`id`, `nom`, `prenom`, `adresse`, `cp`, `ville`, `dateEmbauche`,) values (:id, :nom, :prenom, :adresse, :cp, :ville, :dateEmbauche)";
+    $req = $cnx->prepare($query);
+    $req->bindParam(':id', $id, PDO::PARAM_STR, 100);
+    $req->bindParam(':nom', $nom, PDO::PARAM_STR, 100);
+    $req->bindParam(':prenom', $prenom, PDO::PARAM_STR, 100);
+    $req->bindParam(':adresse', $adresse, PDO::PARAM_STR, 100);
+    $req->bindParam(':cp', $codePostal, PDO::PARAM_STR, 100);
+    $req->bindParam(':ville', $ville, PDO::PARAM_STR, 100);
+    $req->bindParam(':dateEmbauche', $date, PDO::PARAM_STR, 100);
+    return $req->execute();
 }
 ?>

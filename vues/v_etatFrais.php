@@ -1,5 +1,6 @@
 <h2>Fiche de frais du mois <?php echo $numMois."-".$numAnnee?> : 
     </h2>
+
     <p>
         <strong>Etat : </strong>   
             <?php echo $libEtat?> depuis le <?php echo $dateModif?> <br> 
@@ -36,39 +37,91 @@
             </tbody>
     </table><br>
      <?php 
+
      if (!empty($lesFraisHorsForfait)) {                  
      
      ?>
+     <?php
+
+
+
+
+
+
+
+     
+  if( $libEtat == "Supprimé")
+
+  {
+
+    ?>
+
+  
   	<table class="table table-bordered">
   	   <caption>Descriptif des éléments hors forfait -<?php echo $nbJustificatifs ?> justificatifs reçus -
        </caption>
             <thead>
              <tr>
+ 
+          
+
                 <th class="date">Date</th>
                 <th class="libelle">Libellé</th>
-                <th class='montant'>Montant</th>                
+                <th class='montant'>Montant</th>     
+
              </tr>
             </thead>
             <tbody>
         <?php      
-          foreach ( $lesFraisHorsForfait as $unFraisHorsForfait ) 
+
+      foreach ( $lesFraisHorsForfait as $unFraisHorsForfait ) 
 		  {
+      $motifSuppr = $unFraisHorsForfait['motifSuppr'];
 			$date = $unFraisHorsForfait['date'];
 			$libelle = $unFraisHorsForfait['libelle'];
 			$montant = $unFraisHorsForfait['montant'];
+
+
+if($motifSuppr != null)
+{
 		?>
+
              <tr>
-                <td><?php echo $date ?></td>
-                <td><?php echo $libelle ?></td>
-                <td><?php echo $montant ?></td>
+                <td> <div style = "color:red" title=  "Motif : <?php echo $motifSuppr ;?>">  <?php echo $date ;  ?> </td>
+                <td> <div style = "color:red" title= "Motif : <?php echo $motifSuppr ;?>" > <?php   echo $libelle ?>  </td>
+                <td> <div style = "color:red" title= "Motif : <?php echo $motifSuppr; ?>" > <?php  echo $montant ?>  </td>
              </tr>
+<?php } 
+
+else {
+  ?>
+
+              <tr>
+                
+                <td> <div title= "Motif : Aucun"> <?php echo $date ;  ?> </td>
+                <td> <div title= "Motif : Aucun" > <?php   echo $libelle ?>  </td>
+                <td> <div title= "Motif : Aucun" > <?php  echo $montant ?>  </td>
+             </tr>
+
+
+
+<?php } ?>
+
+
+
+
+
             
-        <?php 
+        <?php
+
           }
 		?>
             </tbody>
     </table>
+    </div>
+    
      <?php 
+     }
      }
      else {
          echo "<strong>Vous n'avez pas d'élément hors forfait pour ce mois.</strong>";

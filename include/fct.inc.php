@@ -200,4 +200,52 @@ function nbErreurs(){
 	   return count($_REQUEST['erreurs']);
 	}
 }
+
+function estAlphabetique($str)
+{
+    preg_match("/([^âêôûîäëïöüèéàçA-Za-z-])/",$str,$result);
+    if(!empty($result))
+    {
+        return false;
+    }
+    return true;
+}
+
+function estCodePostalValide($cp) 
+{
+    if(!preg_match("/[0-9]{5}/",$cp,$result))
+    {
+        return false;
+    }
+    return true;
+}
+
+function verifierUtilisateur($id, $nom, $prenom, $codePostal, $ville, $date)
+{
+    if(!estAlphabetique($nom))
+    {
+            ajouterErreur("Le nom renseigné n'est pas valide.","creerUtilisateur");
+    }
+    if(!estAlphabetique($prenom))
+    {
+            ajouterErreur("Le prénom renseigné n'est pas valide.","creerUtilisateur");
+    }	
+    if(!estAlphabetique($ville))
+    {
+            ajouterErreur("Le nom de la ville renseigné n'est pas valide.","creerUtilisateur");
+    }
+    if(!estDateValide($date))
+    {
+            ajouterErreur("La date renseignée n'est pas valide.","creerUtilisateur");
+    }
+    if(!estCodePostalValide($codePostal))
+    {
+            ajouterErreur("Le code postal renseigné n'est pas valide.","creerUtilisateur");
+    }
+    if(strlen($id)>4)
+    {
+            ajouterErreur("L'id rentré n'est pas valide.","creerUtilisateur");
+    }
+}
+
 ?>
